@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบ 10 ข้อ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Kanit', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 100, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, #4a6fa5, #6c9dce, #4a6fa5);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #e0e0e0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .progress-container {
+            margin-bottom: 25px;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 12px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #4a6fa5, #6c9dce);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: bold;
+            color: #4a6fa5;
+            margin-top: 5px;
+        }
+        
+        .question-container {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 25px;
+            border-left: 5px solid #4a6fa5;
+        }
+        
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-number {
+            font-size: 1.1rem;
+            color: #4a6fa5;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background-color: #f0f7ff;
+            border-color: #a0c0e0;
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            background-color: #e3f0ff;
+            border-color: #4a6fa5;
+            color: #2c3e50;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-prev {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        
+        .btn-prev:hover:not(:disabled) {
+            background-color: #e0e0e0;
+        }
+        
+        .btn-next {
+            background-color: #4a6fa5;
+            color: white;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            background-color: #3a5a8a;
+        }
+        
+        .btn-submit {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            border-top: 5px solid #4a6fa5;
+        }
+        
+        .result-title {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #4a6fa5;
+            margin: 20px 0;
+        }
+        
+        .score-text {
+            font-size: 1.3rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .restart-btn {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background-color: #3a5a8a;
+        }
+        
+        .question-summary {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .summary-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: white;
+            border-left: 5px solid #ddd;
+        }
+        
+        .summary-item.correct {
+            border-left-color: #28a745;
+            background-color: #f8fff9;
+        }
+        
+        .summary-item.incorrect {
+            border-left-color: #dc3545;
+            background-color: #fff8f8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .score {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>แบบทดสอบ 10 ข้อ</h1>
+            <p class="subtitle">ทดสอบความรู้ทั่วไปของคุณกับแบบทดสอบ 10 ข้อนี้</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">ข้อที่ 1 จาก 10</div>
+        
+        <div id="quizContainer">
+            <!-- คำถามจะถูกเพิ่มโดย JavaScript -->
+        </div>
+        
+        <div class="buttons-container">
+            <button class="btn btn-prev" id="prevBtn" disabled>ข้อก่อนหน้า</button>
+            <button class="btn btn-next" id="nextBtn">ข้อต่อไป</button>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <h2 class="result-title">ผลการทดสอบ</h2>
+            <div class="score" id="score">0/10</div>
+            <p class="score-text" id="scoreText">กำลังประมวลผลผลลัพธ์...</p>
+            
+            <div class="question-summary" id="questionSummary">
+                <!-- สรุปคำถามจะถูกเพิ่มโดย JavaScript -->
+            </div>
+            
+            <button class="restart-btn" id="restartBtn">ทำแบบทดสอบอีกครั้ง</button>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลคำถาม (สามารถแก้ไขหรือเพิ่มได้)
+        const questions = [
+            {
+                question: "ประเทศใดมีประชากรมากที่สุดในโลก?",
+                options: ["อินเดีย", "จีน", "สหรัฐอเมริกา", "อินโดนีเซีย"],
+                correctAnswer: 1
+            },
+            {
+                question: "ธาตุใดที่มีสัญลักษณ์เป็น O?",
+                options: ["ทองแดง", "ออกซิเจน", "ทองคำ", "เงิน"],
+                correctAnswer: 1
+            },
+            {
+                question: "ดาวเคราะห์ดวงใดเป็นดาวเคราะห์ที่ใหญ่ที่สุดในระบบสุริยะ?",
+                options: ["โลก", "ดาวอังคาร", "ดาวพฤหัสบดี", "ดาวเสาร์"],
+                correctAnswer: 2
+            },
+            {
+                question: "หน่วยวัดความยาวในระบบเมตริกคืออะไร?",
+                options: ["ปอนด์", "ลิตร", "เมตร", "กิโลกรัม"],
+                correctAnswer: 2
+            },
+            {
+                question: "ปีใดที่มนุษย์เหยียบดวงจันทร์เป็นครั้งแรก?",
+                options: ["1965", "1969", "1972", "1959"],
+                correctAnswer: 1
+            },
+            {
+                question: "ภาษาโปรแกรมใดที่ใช้หลักในการพัฒนาเว็บไซต์ด้าน front-end?",
+                options: ["Python", "Java", "JavaScript", "C++"],
+                correctAnswer: 2
+            },
+            {
+                question: "สัตว์ชนิดใดเป็นสัตว์เลี้ยงลูกด้วยนมที่ใหญ่ที่สุดในโลก?",
+                options: ["ช้างแอฟริกา", "ยีราฟ", "วาฬสีน้ำเงิน", "ฮิปโปโปเตมัส"],
+                correctAnswer: 2
+            },
+            {
+                question: "ธงชาติไทยมีกี่สี?",
+                options: ["2 สี", "3 สี", "4 สี", "5 สี"],
+                correctAnswer: 1
+            },
+            {
+                question: "แม่น้ำสายใดที่ยาวที่สุดในโลก?",
+                options: ["แม่น้ำแอมะซอน", "แม่น้ำไนล์", "แม่น้ำแยงซี", "แม่น้ำมิสซิสซิปปี"],
+                correctAnswer: 1
+            },
+            {
+                question: "สารใดเป็นองค์ประกอบหลักของเพชร?",
+                options: ["เหล็ก", "คาร์บอน", "ซิลิกอน", "อะลูมิเนียม"],
+                correctAnswer: 1
+            }
+        ];
+
+        // ตัวแปรสถานะ
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let quizCompleted = false;
+
+        // อ้างอิงองค์ประกอบ HTML
+        const quizContainer = document.getElementById('quizContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const scoreElement = document.getElementById('score');
+        const scoreTextElement = document.getElementById('scoreText');
+        const questionSummaryElement = document.getElementById('questionSummary');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // เริ่มต้นสร้างแบบทดสอบ
+        function initQuiz() {
+            // สร้างคอนเทนเนอร์สำหรับแต่ละคำถาม
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = `question-container ${index === 0 ? 'active' : ''}`;
+                questionDiv.id = `question-${index}`;
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">ข้อที่ ${index + 1}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-container" id="options-${index}">
+                        ${question.options.map((option, optIndex) => `
+                            <div class="option" data-index="${optIndex}">${option}</div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionDiv);
+            });
+            
+            // อัพเดตความคืบหน้า
+            updateProgress();
+            
+            // เพิ่มเหตุการณ์คลิกสำหรับตัวเลือกคำตอบ
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionClick);
+            });
+            
+            // เพิ่มเหตุการณ์ให้ปุ่มต่างๆ
+            prevBtn.addEventListener('click', showPreviousQuestion);
+            nextBtn.addEventListener('click', showNextQuestion);
+            restartBtn.addEventListener('click', restartQuiz);
+        }
+
+        // จัดการเมื่อคลิกตัวเลือกคำตอบ
+        function handleOptionClick(event) {
+            if (quizCompleted) return;
+            
+            const questionIndex = parseInt(event.target.closest('.question-container').id.split('-')[1]);
+            const optionIndex = parseInt(event.target.getAttribute('data-index'));
+            
+            // บันทึกคำตอบของผู้ใช้
+            userAnswers[questionIndex] = optionIndex;
+            
+            // ล้างการเลือกทั้งหมดในคำถามนี้
+            const options = event.target.parentNode.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // ทำเครื่องหมายตัวเลือกที่เลือก
+            event.target.classList.add('selected');
+            
+            // เปิดใช้งานปุ่มต่อไปหากจำเป็น
+            if (currentQuestionIndex === questionIndex) {
+                nextBtn.disabled = false;
+            }
+        }
+
+        // แสดงคำถามก่อนหน้า
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                document.getElementById(`question-${currentQuestionIndex}`).classList.remove('active');
+                currentQuestionIndex--;
+                document.getElementById(`question-${currentQuestionIndex}`).classList.add('active');
+                updateProgress();
+                updateButtons();
+                
+                // ตรวจสอบว่ามีคำตอบสำหรับคำถามนี้หรือไม่
+                const selectedOption = userAnswers[currentQuestionIndex];
+                if (selectedOption !== null) {
+                    const options = document.querySelectorAll(`#question-${currentQuestionIndex} .option`);
+                    options.forEach(opt => {
+                        if (parseInt(opt.getAttribute('data-index')) === selectedOption) {
+                            opt.classList.add('selected');
+                        }
+                    });
+                }
+            }
+        }
+
+        // แสดงคำถามถัดไป
+        function showNextQuestion() {
+            // ถ้ายังไม่ได้ตอบคำถามปัจจุบัน
+            if (userAnswers[currentQuestionIndex] === null && !quizCompleted) {
+                alert("กรุณาเลือกคำตอบก่อนไปข้อต่อไป");
+                return;
+            }
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                document.getElementById(`question-${currentQuestionIndex}`).classList.remove('active');
+                currentQuestionIndex++;
+                document.getElementById(`question-${currentQuestionIndex}`).classList.add('active');
+                updateProgress();
+                updateButtons();
+                
+                // ตรวจสอบว่ามีคำตอบสำหรับคำถามนี้หรือไม่
+                const selectedOption = userAnswers[currentQuestionIndex];
+                if (selectedOption !== null) {
+                    const options = document.querySelectorAll(`#question-${currentQuestionIndex} .option`);
+                    options.forEach(opt => {
+                        if (parseInt(opt.getAttribute('data-index')) === selectedOption) {
+                            opt.classList.add('selected');
+                        }
+                    });
+                }
+            } else {
+                // ถ้าอยู่ที่คำถามสุดท้าย ให้ส่งคำตอบ
+                submitQuiz();
+            }
+        }
+
+        // อัพเดตความคืบหน้า
+        function updateProgress() {
+            const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `ข้อที่ ${currentQuestionIndex + 1} จาก ${questions.length}`;
+        }
+
+        // อัพเดตสถานะปุ่ม
+        function updateButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = "ส่งคำตอบ";
+                nextBtn.classList.remove('btn-next');
+                nextBtn.classList.add('btn-submit');
+            } else {
+                nextBtn.textContent = "ข้อต่อไป";
+                nextBtn.classList.remove('btn-submit');
+                nextBtn.classList.add('btn-next');
+            }
+            
+            // เปิดใช้งานปุ่มต่อไปหากผู้ใช้ตอบคำถามปัจจุบันแล้ว
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && !quizCompleted;
+        }
+
+        // ส่งคำตอบและคำนวณคะแนน
+        function submitQuiz() {
+            quizCompleted = true;
+            
+            // คำนวณคะแนน
+            let score = 0;
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.correctAnswer) {
+                    score++;
+                }
+            });
+            
+            // แสดงผลลัพธ์
+            scoreElement.textContent = `${score}/${questions.length}`;
+            
+            // แสดงข้อความตามคะแนน
+            let scoreMessage = "";
+            if (score === questions.length) {
+                scoreMessage = "ยอดเยี่ยมมาก! คุณตอบถูกทุกข้อ";
+            } else if (score >= questions.length * 0.7) {
+                scoreMessage = "ทำได้ดีมาก! ความรู้ของคุณอยู่ในระดับสูง";
+            } else if (score >= questions.length * 0.5) {
+                scoreMessage = "ทำได้ดี! มีพื้นที่สำหรับการพัฒนาอีกนิด";
+            } else {
+                scoreMessage = "พยายามอีกครั้ง! ลองศึกษาข้อมูลเพิ่มเติม";
+            }
+            
+            scoreTextElement.textContent = scoreMessage;
+            
+            // แสดงสรุปคำถาม
+            displayQuestionSummary(score);
+            
+            // ซ่อนแบบทดสอบและแสดงผลลัพธ์
+            document.querySelector('.buttons-container').style.display = 'none';
+            document.querySelectorAll('.question-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            resultContainer.style.display = 'block';
+            
+            // อัพเดตความคืบหน้าเป็น 100%
+            progressBar.style.width = '100%';
+            progressText.textContent = "เสร็จสิ้น";
+        }
+
+        // แสดงสรุปคำถาม
+        function displayQuestionSummary(score) {
+            questionSummaryElement.innerHTML = '<h3>สรุปคำตอบ:</h3>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                
+                const summaryItem = document.createElement('div');
+                summaryItem.className = `summary-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                const userAnswerText = userAnswer !== null ? question.options[userAnswer] : "ไม่ได้ตอบ";
+                const correctAnswerText = question.options[question.correctAnswer];
+                
+                summaryItem.innerHTML = `
+                    <div><strong>ข้อที่ ${index + 1}:</strong> ${question.question}</div>
+                    <div><strong>คำตอบของคุณ:</strong> ${userAnswerText} ${isCorrect ? '✓' : '✗'}</div>
+                    ${!isCorrect ? `<div><strong>คำตอบที่ถูกต้อง:</strong> ${correctAnswerText}</div>` : ''}
+                `;
+                
+                questionSummaryElement.appendChild(summaryItem);
+            });
+        }
+
+        // รีเซ็ตแบบทดสอบ
+        function restartQuiz() {
+            // รีเซ็ตตัวแปรสถานะ
+            currentQuestionIndex = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            quizCompleted = false;
+            
+            // รีเซ็ต UI
+            document.querySelectorAll('.question-container').forEach((container, index) => {
+                container.classList.remove('active');
+                container.style.display = 'block';
+                
+                // ล้างการเลือกคำตอบ
+                const options = container.querySelectorAll('.option');
+                options.forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                // แสดงคำถามแรก
+                if (index === 0) {
+                    container.classList.add('active');
+                }
+            });
+            
+            // ซ่อนผลลัพธ์
+            resultContainer.style.display = 'none';
+            
+            // แสดงปุ่มและแบบทดสอบ
+            document.querySelector('.buttons-container').style.display = 'flex';
+            
+            // อัพเดตความคืบหน้าและปุ่ม
+            updateProgress();
+            updateButtons();
+        }
+
+        // เริ่มต้นแบบทดสอบเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
