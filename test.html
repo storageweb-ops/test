@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Quiz</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>คำถามที่ 1</h2>
+<p>ประเทศไทยมีเมืองหลวงคืออะไร?</p>
+
+<input type="radio" name="q1" value="a"> เชียงใหม่<br>
+<input type="radio" name="q1" value="b"> ขอนแก่น<br>
+<input type="radio" name="q1" value="c"> กรุงเทพมหานคร<br>
+
+<button onclick="checkAnswer()">ตรวจคำตอบ</button>
+
+<p id="result"></p>
+
+<script>
+function checkAnswer() {
+  let ans = document.querySelector('input[name="q1"]:checked');
+
+  if (!ans) {
+    alert("กรุณาเลือกคำตอบ");
+    return;
+  }
+
+  if (ans.value === "c") {
+    document.getElementById("result").innerHTML = "✅ ถูกต้อง";
+    // ส่งคะแนนกลับไป MIT App Inventor
+    window.AppInventor.setWebViewString("score=1");
+  } else {
+    document.getElementById("result").innerHTML = "❌ ผิด";
+    window.AppInventor.setWebViewString("score=0");
+  }
+}
+</script>
+
+</body>
+</html>
